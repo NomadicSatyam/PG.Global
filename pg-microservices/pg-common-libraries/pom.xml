@@ -1,0 +1,476 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+
+        <modelVersion>4.0.0</modelVersion>
+        <groupId>com.satyampay.pg</groupId>
+        <artifactId>pg-common-libraries</artifactId>
+        <version>0.0.1-SNAPSHOT</version>
+        <name>pg-common-libraries</name>
+        <description>Common libraries and properties used among all projects</description>
+        <packaging>pom</packaging>
+
+
+        <!-- PROPERTIES -->
+        <properties>
+                <aws-sdk.version>2.28.19</aws-sdk.version>
+                <caffeine.version>3.1.8</caffeine.version>
+                <commons-io.version>2.16.1</commons-io.version>
+                <gson.version>2.10.1</gson.version>
+                <http-client.version>4.5.14</http-client.version>
+                <http-core.version>4.4.16</http-core.version>
+                <jackson.version>2.16.2</jackson.version>
+                <java.version>17</java.version>
+                <javax-annotation.version>1.2</javax-annotation.version>
+                <jayway.jsonpath-version>2.9.0</jayway.jsonpath-version>
+                <jolt.version>0.1.8</jolt.version>
+                <json-flattener.version>0.16.6</json-flattener.version>
+                <json-schema-validator.version>5.4.0</json-schema-validator.version>
+                <json.version>20231013</json.version>
+                <junit.version>4.13.2</junit.version>
+                <log4j2.version>2.21.1</log4j2.version>
+                <logstash-gelf.version>1.15.1</logstash-gelf.version>
+                <lombok.version>1.18.30</lombok.version>
+                <maven-compiler.version>3.12.1</maven-compiler.version>
+                <mockito-version>5.11.0</mockito-version>
+                <mongodb.version>3.4.4</mongodb.version>
+                <openapi-plugin.version>1.4</openapi-plugin.version>
+                <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+                <reactor-core.version>3.6.7</reactor-core.version>
+                <rest-assured.version>5.5.0</rest-assured.version>
+                <spring-boot.version>3.2.5</spring-boot.version>
+                <spring-core.version>6.1.13</spring-core.version>
+                <spring-log4j2.version>2.7.3</spring-log4j2.version>
+                <springdoc-openapi-maven-plugin.version>1.4</springdoc-openapi-maven-plugin.version>
+                <springdoc-openapi.version>2.6.0</springdoc-openapi.version>
+                <system-stubs-jupiter.version>2.0.1</system-stubs-jupiter.version>
+                <wiremock.version>3.9.1</wiremock.version>
+                <kafka-version>3.3.6</kafka-version>
+                <openfeign-version>4.2.1</openfeign-version>
+                <modelMapper-version>3.0.0</modelMapper-version>
+        </properties>
+
+        <!-- DEPENDENCIES -->
+        <dependencyManagement>
+
+                <dependencies>
+
+                        <!-- COMMONS IO -->
+                        <dependency>
+                                <groupId>commons-io</groupId>
+                                <artifactId>commons-io</artifactId>
+                                <version>${commons-io.version}</version>
+                        </dependency>
+
+                        <!-- OPEN API -->
+                        <dependency>
+                                <groupId>org.springdoc</groupId>
+                                <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
+                                <version>${springdoc-openapi.version}</version>
+                                <exclusions>
+                                        <!-- Vulnerability Exclusions -->
+                                        <exclusion>
+                                                <groupId>org.springframework</groupId>
+                                                <artifactId>spring-web</artifactId>
+                                        </exclusion>
+                                        <exclusion>
+                                                <groupId>org.springframework</groupId>
+                                                <artifactId>spring-webmvc</artifactId>
+                                        </exclusion>
+                                </exclusions>
+                        </dependency>
+
+                        <dependency>
+                                <groupId>com.jayway.jsonpath</groupId>
+                                <artifactId>json-path</artifactId>
+                                <version>${jayway.jsonpath-version}</version>
+                                <exclusions>
+                                        <exclusion>
+                                                <groupId>org.slf4j</groupId>
+                                                <artifactId>slf4j-api</artifactId>
+                                        </exclusion>
+                                </exclusions>
+                        </dependency>
+
+                        <dependency>
+                                <groupId>org.springdoc</groupId>
+                                <artifactId>springdoc-openapi-starter-webflux-ui</artifactId>
+                                <version>${springdoc-openapi.version}</version>
+                                <exclusions>
+                                        <!-- Vulnerability Exclusion -->
+                                        <exclusion>
+                                                <groupId>org.springframework</groupId>
+                                                <artifactId>spring-web</artifactId>
+                                        </exclusion>
+                                </exclusions>
+                        </dependency>
+
+                        <dependency>
+                                <groupId>org.springdoc</groupId>
+                                <artifactId>springdoc-openapi-maven-plugin</artifactId>
+                                <version>${springdoc-openapi-maven-plugin.version}</version>
+                                <type>maven-plugin</type>
+                                <exclusions>
+                                        <!-- Vulnerability Exclusion -->
+                                        <exclusion>
+                                                <groupId>org.springframework</groupId>
+                                                <artifactId>*</artifactId>
+                                        </exclusion>
+                                </exclusions>
+                        </dependency>
+
+                        <!-- SPRING BOOT -->
+                        <dependency>
+                                <groupId>org.springframework.boot</groupId>
+                                <artifactId>spring-boot-starter-web</artifactId>
+                                <version>${spring-boot.version}</version>
+                                <exclusions>
+                                        <!-- Vulnerability Exclusions -->
+                                        <exclusion>
+                                                <groupId>org.springframework</groupId>
+                                                <artifactId>spring-web</artifactId>
+                                        </exclusion>
+                                        <exclusion>
+                                                <groupId>org.springframework.boot</groupId>
+                                                <artifactId>spring-boot-starter-logging</artifactId>
+                                        </exclusion>
+                                </exclusions>
+                        </dependency>
+
+                        <dependency>
+                                <groupId>org.springframework.boot</groupId>
+                                <artifactId>spring-boot-starter-validation</artifactId>
+                                <version>${spring-boot.version}</version>
+                                <exclusions>
+                                        <!-- Vulnerability Exclusion -->
+                                        <exclusion>
+                                                <groupId>org.springframework</groupId>
+                                                <artifactId>spring-web</artifactId>
+                                        </exclusion>
+                                </exclusions>
+                        </dependency>
+
+                        <dependency>
+                                <groupId>org.springframework.boot</groupId>
+                                <artifactId>spring-boot-maven-plugin</artifactId>
+                                <version>${spring-boot.version}</version>
+                                <exclusions>
+                                        <!-- Vulnerability Exclusion -->
+                                        <exclusion>
+                                                <groupId>org.apache.commons</groupId>
+                                                <artifactId>commons-compress</artifactId>
+                                        </exclusion>
+                                </exclusions>
+                        </dependency>
+
+                        <dependency>
+                                <groupId>org.springframework.boot</groupId>
+                                <artifactId>spring-boot-starter-test</artifactId>
+                                <scope>test</scope>
+                                <version>${spring-boot.version}</version>
+                                <!-- Duplicate JSONObject exclusion -->
+                                <exclusions>
+                                        <exclusion>
+                                                <groupId>com.vaadin.external.google</groupId>
+                                                <artifactId>android-json</artifactId>
+                                        </exclusion>
+                                        <!-- Vulnerability exclusion -->
+                                        <exclusion>
+                                                <groupId>org.xmlunit</groupId>
+                                                <artifactId>xmlunit-core</artifactId>
+                                        </exclusion>
+                                </exclusions>
+                        </dependency>
+
+                        <dependency>
+                                <groupId>org.springframework</groupId>
+                                <artifactId>spring-web</artifactId>
+                                <version>${spring-core.version}</version>
+                                <!-- Vulnerability exclusion -->
+                                <exclusions>
+                                        <exclusion>
+                                                <groupId>org.xmlunit</groupId>
+                                                <artifactId>xmlunit-core</artifactId>
+                                        </exclusion>
+                                </exclusions>
+                        </dependency>
+
+                        <dependency>
+                                <groupId>org.springframework.boot</groupId>
+                                <artifactId>spring-boot-starter-log4j2</artifactId>
+                                <version>${spring-log4j2.version}</version>
+                        </dependency>
+
+                        <dependency>
+                                <groupId>org.springframework.boot</groupId>
+                                <artifactId>spring-boot-starter-cache</artifactId>
+                                <version>${spring-boot.version}</version>
+                        </dependency>
+
+                        <!-- JAVAX -->
+                        <dependency>
+                                <groupId>javax.annotation</groupId>
+                                <artifactId>javax.annotation-api</artifactId>
+                                <version>${javax-annotation.version}</version>
+                        </dependency>
+
+                        <!-- SPRING -->
+                        <dependency>
+                                <groupId>org.springframework</groupId>
+                                <artifactId>spring-core</artifactId>
+                                <version>${spring-core.version}</version>
+                        </dependency>
+
+                        <!-- AWS -->
+                        <dependency>
+                                <groupId>software.amazon.awssdk</groupId>
+                                <artifactId>bom</artifactId>
+                                <version>${aws-sdk.version}</version>
+                                <type>pom</type>
+                                <scope>import</scope>
+                        </dependency>
+
+                        <!-- CACHE CAFFEINE -->
+                        <dependency>
+                                <groupId>com.github.ben-manes.caffeine</groupId>
+                                <artifactId>caffeine</artifactId>
+                                <version>${caffeine.version}</version>
+                        </dependency>
+
+                        <!-- LOMBOK -->
+                        <dependency>
+                                <groupId>org.projectlombok</groupId>
+                                <artifactId>lombok</artifactId>
+                                <version>${lombok.version}</version>
+                        </dependency>
+
+                        <!-- JACKSON -->
+                        <dependency>
+                                <groupId>com.fasterxml.jackson.core</groupId>
+                                <artifactId>jackson-core</artifactId>
+                                <version>${jackson.version}</version>
+                        </dependency>
+
+                        <dependency>
+                                <groupId>com.fasterxml.jackson.core</groupId>
+                                <artifactId>jackson-databind</artifactId>
+                                <version>${jackson.version}</version>
+                        </dependency>
+
+                        <dependency>
+                                <groupId>com.fasterxml.jackson.dataformat</groupId>
+                                <artifactId>jackson-dataformat-xml</artifactId>
+                                <version>${jackson.version}</version>
+                        </dependency>
+
+                        <dependency>
+                                <groupId>com.fasterxml.jackson.core</groupId>
+                                <artifactId>jackson-annotations</artifactId>
+                                <version>${jackson.version}</version>
+                        </dependency>
+
+                        <!-- JOLT -->
+                        <dependency>
+                                <groupId>com.bazaarvoice.jolt</groupId>
+                                <artifactId>jolt-complete</artifactId>
+                                <version>${jolt.version}</version>
+                        </dependency>
+
+                        <!-- LOGGING -->
+                        <dependency>
+                                <groupId>org.apache.logging.log4j</groupId>
+                                <artifactId>log4j-api</artifactId>
+                                <version>${log4j2.version}</version>
+                        </dependency>
+
+                        <dependency>
+                                <groupId>org.apache.logging.log4j</groupId>
+                                <artifactId>log4j-core</artifactId>
+                                <version>${log4j2.version}</version>
+                        </dependency>
+
+                        <!-- GELF -->
+                        <dependency>
+                                <groupId>biz.paluch.logging</groupId>
+                                <artifactId>logstash-gelf</artifactId>
+                                <version>${logstash-gelf.version}</version>
+                        </dependency>
+
+                        <!-- JSON  -->
+                        <dependency>
+                                <groupId>org.json</groupId>
+                                <artifactId>json</artifactId>
+                                <version>${json.version}</version>
+                        </dependency>
+
+                        <!-- JSON SCHEMA VALIDATOR -->
+                        <dependency>
+                                <groupId>io.rest-assured</groupId>
+                                <artifactId>json-schema-validator</artifactId>
+                                <version>${json-schema-validator.version}</version>
+                                <exclusions>
+                                        <!-- Vulnerability Exclusion -->
+                                        <exclusion>
+                                                <groupId>com.fasterxml.jackson.core</groupId>
+                                                <artifactId>*</artifactId>
+                                        </exclusion>
+                                </exclusions>
+                        </dependency>
+
+                        <!-- JSON FLATTENER -->
+                        <dependency>
+                                <groupId>com.github.wnameless.json</groupId>
+                                <artifactId>json-flattener</artifactId>
+                                <version>${json-flattener.version}</version>
+                        </dependency>
+
+                        <!--  HTTP CLIENT -->
+                        <dependency>
+                                <groupId>org.apache.httpcomponents</groupId>
+                                <artifactId>httpclient</artifactId>
+                                <version>${http-client.version}</version>
+                                <exclusions>
+                                        <!-- Vulnerability exclusion -->
+                                        <exclusion>
+                                                <groupId>commons-codec</groupId>
+                                                <artifactId>commons-codec</artifactId>
+                                        </exclusion>
+                                </exclusions>
+                        </dependency>
+
+                        <dependency>
+                                <groupId>org.apache.httpcomponents</groupId>
+                                <artifactId>httpcore</artifactId>
+                                <version>${http-core.version}</version>
+
+                        </dependency>
+
+                        <!-- MAVEN -->
+                        <dependency>
+                                <groupId>org.apache.maven.plugins</groupId>
+                                <artifactId>maven-compiler-plugin</artifactId>
+                                <version>${maven-compiler.version}</version>
+                        </dependency>
+
+                        <!-- TEST -->
+                        <dependency>
+                                <groupId>junit</groupId>
+                                <artifactId>junit</artifactId>
+                                <version>${junit.version}</version>
+                                <scope>test</scope>
+                        </dependency>
+
+                        <dependency>
+                                <groupId>org.mockito</groupId>
+                                <artifactId>mockito-core</artifactId>
+                                <version>${mockito-version}</version>
+                                <scope>test</scope>
+                        </dependency>
+
+                        <dependency>
+                                <groupId>uk.org.webcompere</groupId>
+                                <artifactId>system-stubs-jupiter</artifactId>
+                                <version>${system-stubs-jupiter.version}</version>
+                                <scope>test</scope>
+                        </dependency>
+
+                        <dependency>
+                                <groupId>org.wiremock</groupId>
+                                <artifactId>wiremock</artifactId>
+                                <version>${wiremock.version}</version>
+                                <scope>test</scope>
+                                <exclusions>
+                                        <!-- Vulnerability exclusion -->
+                                        <exclusion>
+                                                <groupId>commons-fileupload</groupId>
+                                                <artifactId>commons-fileupload</artifactId>
+                                        </exclusion>
+                                </exclusions>
+                        </dependency>
+
+                        <dependency>
+                                <groupId>io.rest-assured</groupId>
+                                <artifactId>rest-assured</artifactId>
+                                <version>${rest-assured.version}</version>
+                                <scope>test</scope>
+                        </dependency>
+
+                        <!-- REACTOR-CORE -->
+                        <dependency>
+                                <groupId>io.projectreactor</groupId>
+                                <artifactId>reactor-core</artifactId>
+                                <version>${reactor-core.version}</version>
+                        </dependency>
+
+                        <!-- MONGODB -->
+                        <dependency>
+                                <groupId>org.springframework.boot</groupId>
+                                <artifactId>spring-boot-starter-data-mongodb</artifactId>
+                                <version>${mongodb.version}</version>
+                        </dependency>
+
+                        <!-- Kafka -->
+                        <dependency>
+                                <groupId>org.springframework.kafka</groupId>
+                                <artifactId>spring-kafka</artifactId>
+                                <version>${kafka-version}</version>
+                        </dependency>
+
+                        <!-- Open Feign -->
+                        <dependency>
+                                <groupId>org.springframework.cloud</groupId>
+                                <artifactId>spring-cloud-starter-openfeign</artifactId>
+                                <version>${openfeign-version}</version>
+                        </dependency>
+
+                        <!-- Mapper -->
+                        <dependency>
+                                <groupId>org.modelmapper</groupId>
+                                <artifactId>modelmapper</artifactId>
+                                <version>${modelMapper-version}</version>
+                        </dependency>
+
+                </dependencies>
+
+        </dependencyManagement>
+
+        <!-- BUILD -->
+        <build>
+                <pluginManagement>
+                        <plugins>
+
+                                <!-- SPRING BOOT PLUGIN -->
+                                <plugin>
+                                        <groupId>org.springframework.boot</groupId>
+                                        <artifactId>spring-boot-maven-plugin</artifactId>
+                                        <version>${spring-boot-maven-plugin.version}</version>
+                                        <configuration>
+                                                <excludes>
+                                                        <exclude>
+                                                                <groupId>org.projectlombok</groupId>
+                                                                <artifactId>lombok</artifactId>
+                                                        </exclude>
+                                                </excludes>
+                                        </configuration>
+                                </plugin>
+
+                                <!-- OPEN API PLUGIN -->
+                                <plugin>
+                                        <groupId>org.springdoc</groupId>
+                                        <artifactId>springdoc-openapi-maven-plugin</artifactId>
+                                        <executions>
+                                                <execution>
+                                                        <phase>integration-test</phase>
+                                                        <goals>
+                                                                <goal>generate</goal>
+                                                        </goals>
+                                                </execution>
+                                        </executions>
+                                </plugin>
+                        </plugins>
+
+                </pluginManagement>
+        </build>
+
+</project>
