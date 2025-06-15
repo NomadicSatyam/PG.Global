@@ -7,6 +7,7 @@ import java.util.Map;
 @Data
 public class PaymentRequest {
 
+    private String merchantTransactionId;
     private String merchantCode;
     private Double amount;
     private String currency;

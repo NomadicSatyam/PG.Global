@@ -9,6 +9,7 @@ import java.time.LocalDateTime;
 @Builder
 public class TransactionResponse {
 
+    private String merchantTransactionId; // Unique ID from merchant
     private String transactionId;
     private String merchantCode;
     private String status;

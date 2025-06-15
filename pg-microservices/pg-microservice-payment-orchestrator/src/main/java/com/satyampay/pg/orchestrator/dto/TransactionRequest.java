@@ -9,6 +9,7 @@ import lombok.Data;
 @AllArgsConstructor
 public class TransactionRequest {
 
+    private String merchantTransactionId; // Unique ID for the transaction from the merchant
     private String transactionId;
     private String merchantCode;
     private Double amount;

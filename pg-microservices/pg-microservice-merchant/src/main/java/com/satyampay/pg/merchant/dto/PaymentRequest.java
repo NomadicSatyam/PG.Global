@@ -1,4 +1,4 @@
-package com.satyampay.pg.orchestrator.dto;
+package com.satyampay.pg.merchant.dto;
 
 import lombok.Data;
 

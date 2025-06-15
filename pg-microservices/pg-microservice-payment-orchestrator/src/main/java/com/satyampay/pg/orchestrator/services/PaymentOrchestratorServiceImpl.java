@@ -50,6 +50,7 @@ public class PaymentOrchestratorServiceImpl implements PaymentOrchestratorServic
 
         // Create initial transaction record
         TransactionRequest transactionRequest = TransactionRequest.builder()
+                .merchantTransactionId(dto.getMerchantTransactionId())
                 .transactionId(transactionId)
                 .merchantCode(dto.getMerchantCode())
                 .amount(dto.getAmount())
@@ -100,6 +101,8 @@ public class PaymentOrchestratorServiceImpl implements PaymentOrchestratorServic
 
         // 2. Build status update payload
         TransactionStatusUpdate updateDto = TransactionStatusUpdate.builder()
+                .merchantTransactionId(dto.getMerchantTransactionId())
+                .transactionId(dto.getTransactionId())
                 .status(dto.getStatus())
                 .paymentReference(dto.getPaymentReference())
                 .failureReason(dto.getFailureReason())

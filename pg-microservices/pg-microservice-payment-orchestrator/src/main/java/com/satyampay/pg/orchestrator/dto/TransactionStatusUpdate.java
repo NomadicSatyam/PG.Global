@@ -9,6 +9,7 @@ import lombok.Data;
 @AllArgsConstructor
 public class TransactionStatusUpdate {
 
+    private String merchantTransactionId; // Unique ID for the transaction from the merchant
     private String transactionId;
     private String status;
     private String paymentReference;

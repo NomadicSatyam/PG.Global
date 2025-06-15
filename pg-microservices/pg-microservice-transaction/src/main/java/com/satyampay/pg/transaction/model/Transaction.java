@@ -19,6 +19,8 @@ public class Transaction {
     @Id
     private String transactionId;
 
+    private String merchantTransactionId; // Unique ID from merchant
+
     private String merchantCode;
     private Double amount;
     private String currency;

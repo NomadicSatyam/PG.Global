@@ -20,6 +20,7 @@ public class TransactionServiceImpl implements TransactionService {
     @Override
     public void createTransaction(TransactionRequest dto) {
         Transaction transaction = Transaction.builder()
+                .merchantTransactionId(dto.getMerchantTransactionId())
                 .transactionId(dto.getTransactionId())
                 .merchantCode(dto.getMerchantCode())
                 .amount(dto.getAmount())

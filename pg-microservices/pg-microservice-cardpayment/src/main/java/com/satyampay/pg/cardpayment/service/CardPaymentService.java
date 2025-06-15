@@ -27,6 +27,7 @@ public class CardPaymentService {
 
         // Build callback payload
         Callback callback = new Callback();
+        callback.setMerchantTransactionId(dto.getMerchantTransactionId());
         callback.setTransactionId(transactionId);
         callback.setStatus(status);
         callback.setPaymentReference(paymentRef);
