@@ -9,4 +9,5 @@ public interface TransactionService {
     void createTransaction(TransactionRequest dto);
     void updateStatus(TransactionStatusUpdate dto);
     TransactionResponse getById(String transactionId);
+    void updateTransactionStatus(String transactionId, TransactionStatusUpdate dto);
 }

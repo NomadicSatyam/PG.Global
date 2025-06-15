@@ -17,7 +17,7 @@ public class TransactionController {
     private final TransactionService transactionService;
 
     @PostMapping
-    public ResponseEntity<Void> create(@RequestBody TransactionRequest dto) {
+    public ResponseEntity<Void> createTransaction(@RequestBody TransactionRequest dto) {
         transactionService.createTransaction(dto);
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
@@ -31,5 +31,13 @@ public class TransactionController {
     @GetMapping("/{id}")
     public ResponseEntity<TransactionResponse> get(@PathVariable String id) {
         return ResponseEntity.ok(transactionService.getById(id));
+    }
+
+    @PutMapping("/{id}/status")
+    public ResponseEntity<Void> updateTransactionStatus(
+            @PathVariable String id,
+            @RequestBody TransactionStatusUpdate dto) {
+        transactionService.updateTransactionStatus(id, dto);
+        return ResponseEntity.ok().build();
     }
 }

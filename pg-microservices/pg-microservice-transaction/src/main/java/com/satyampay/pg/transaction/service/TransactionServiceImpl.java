@@ -60,4 +60,15 @@ public class TransactionServiceImpl implements TransactionService {
                 .updatedAt(tx.getUpdatedAt())
                 .build();
     }
+
+    @Override
+    public void updateTransactionStatus(String transactionId, TransactionStatusUpdate dto) {
+        Transaction transaction = repository.findById(transactionId)
+                .orElseThrow(() -> new TransactionNotFoundException(transactionId));
+        transaction.setStatus(dto.getStatus());
+        transaction.setPaymentReference(dto.getPaymentReference());
+        transaction.setFailureReason(dto.getFailureReason());
+        transaction.setUpdatedAt(LocalDateTime.now());
+        repository.save(transaction);
+    }
 }

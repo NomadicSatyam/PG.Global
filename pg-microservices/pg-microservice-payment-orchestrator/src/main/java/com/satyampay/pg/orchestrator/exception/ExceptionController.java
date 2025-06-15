@@ -17,4 +17,9 @@ public class ExceptionController {
     public ResponseEntity<String> handleIllegal(IllegalArgumentException ex) {
         return ResponseEntity.badRequest().body(ex.getMessage());
     }
+
+    @ExceptionHandler(TransactionNotFoundException.class)
+    public ResponseEntity<String> handleTransactionNotFound(TransactionNotFoundException ex) {
+       return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ex.getMessage());
+    }
 }
