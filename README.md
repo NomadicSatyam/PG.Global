@@ -10,9 +10,9 @@ PG.Global is a scalable, extensible, and secure microservices-based **Payment Ga
 
 * **Java 17 / Spring Boot 3+**
 * **Spring Cloud** (OpenFeign, Eureka, Config)
-* **MongoDB / PostgreSQL**
-* **Kafka** (for event-driven architecture – optional)
-* **Docker + Docker Compose**
+* **MongoDB**
+* **Kafka** (for event-driven architecture)
+* **Docker + Kubernetes**
 * **Lombok**, **MapStruct**, **MongoDb** 
 
 ---
@@ -22,17 +22,25 @@ PG.Global is a scalable, extensible, and secure microservices-based **Payment Ga
 ```
 PG.Global/
 │
-├── merchant-service         # Manages merchant registration, KYC, API keys
-├── orchestrator-service     # Entry point; routes payments to correct services
-├── card-payment-service     # Handles card payment flow
-├── upi-service              # Handles UPI transactions
-├── netbanking-service       # Handles net banking transactions
-├── transaction-service      # Stores and manages all payment transactions
-├── settlement-service       # Processes successful transactions for settlement
-├── refund-service           # Handles partial/full refunds
-├── fraud-service            # Detects fraudulent transaction patterns
-├── gateway-service          # (Optional) API Gateway using Spring Cloud Gateway
-└── config-service           # (Optional) Centralized config for all services
+├── PG-Microservices/             # Core payment microservices
+│   ├── merchant-service          # Handles merchant onboarding, KYC, and API key management
+│   ├── orchestrator-service      # Acts as an entry point and routes payment requests
+│   ├── card-payment-service      # Processes card-based payments (credit/debit)
+│   ├── upi-service               # Handles UPI payment transactions
+│   ├── netbanking-service        # Manages net banking payment flow
+│   ├── transaction-service       # Records, tracks, and queries all transactions
+│   ├── settlement-service        # Performs fund settlements post successful payments
+│   ├── refund-service            # Manages full and partial refunds
+│   ├── fraud-service             # Detects and flags potential fraudulent transactions
+│   ├── gateway-service           # [Optional] Spring Cloud Gateway for centralized routing
+│   └── config-service            # [Optional] Centralized configuration using Spring Cloud Config
+│
+└── devops/                       # DevOps-related files (Docker, Kubernetes, CI/CD)
+    ├── Dockerfile                # Dockerfile file for create docker image
+    ├── k8s/                      # Kubernetes manifests (Deployments, Services, Ingress)
+    ├── Jenkinsfile / GitHub Actions # CI/CD pipeline definitions
+    └── helm/                     # Helm charts for deployment packaging
+
 ```
 
 ---
@@ -57,11 +65,12 @@ PG.Global/
 ### 1. Clone the repo
 
 ```bash
-git clone https://github.com/your-org/PG.Global.git
+git@github.com:NomadicSatyam/PG.Global.git
+
 cd PG.Global
 ```
 
-### 2. Start MongoDB or PostgreSQL via Docker (optional)
+### 2. Start Kafka , MongoDB or PostgreSQL via Docker (optional)
 
 ```bash
 docker-compose up -d
