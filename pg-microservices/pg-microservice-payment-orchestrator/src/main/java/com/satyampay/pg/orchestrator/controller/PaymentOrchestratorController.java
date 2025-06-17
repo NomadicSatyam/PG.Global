@@ -26,8 +26,9 @@ public class PaymentOrchestratorController {
      * @return a response entity containing the payment response
      */
     @PostMapping
-    public ResponseEntity<PaymentResponse> initiate(@RequestBody @Valid PaymentRequest dto) {
-        return ResponseEntity.ok(orchestratorService.initiatePayment(dto));
+    public ResponseEntity<String> initiate(@RequestBody @Valid PaymentRequest dto) {
+        orchestratorService.initiatePayment(dto);
+        return ResponseEntity.ok("Payment initiated successfully. Please check the status later.");
     }
 
     /**

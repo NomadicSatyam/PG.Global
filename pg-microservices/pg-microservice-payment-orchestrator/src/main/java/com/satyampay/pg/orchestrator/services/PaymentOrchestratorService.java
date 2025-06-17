@@ -5,6 +5,6 @@ import com.satyampay.pg.orchestrator.dto.PaymentRequest;
 import com.satyampay.pg.orchestrator.dto.PaymentResponse;
 
 public interface PaymentOrchestratorService {
-    PaymentResponse initiatePayment(PaymentRequest dto);
+    void initiatePayment(PaymentRequest dto);
     void handleCallback(Callback dto);
 }

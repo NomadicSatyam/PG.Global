@@ -2,7 +2,6 @@ package com.satyampay.pg.orchestrator.services;
 
 import com.satyampay.pg.orchestrator.clients.*;
 import com.satyampay.pg.orchestrator.dto.*;
-import com.satyampay.pg.orchestrator.exception.FraudResponseStatusException;
 import com.satyampay.pg.orchestrator.exception.MerchantAuthException;
 import com.satyampay.pg.orchestrator.exception.TransactionNotFoundException;
 import com.satyampay.pg.orchestrator.kafka.KafkaProducerService;
@@ -40,7 +39,7 @@ public class PaymentOrchestratorServiceImpl implements PaymentOrchestratorServic
      * @return PaymentResponse with transaction ID and initial status.
      */
     @Override
-    public PaymentResponse initiatePayment(PaymentRequest dto) {
+    public void initiatePayment(PaymentRequest dto) {
         // Step 1: Validate merchant
         MerchantResponse merchant = merchantClient.getMerchantByCode(dto.getMerchantCode());
         if (!merchant.getApiKey().equals(dto.getApiKey()) || !merchant.isKycVerified()) {
@@ -63,7 +62,17 @@ public class PaymentOrchestratorServiceImpl implements PaymentOrchestratorServic
             FraudDetectionResponse fraudResponse = fraudClient.checkTransaction(fraudRequest);
             if ("FRAUDULENT".equalsIgnoreCase(fraudResponse.getStatus())) {
                 log.warn("Fraud detected for transaction {}: {}", transactionId, fraudResponse.getReason());
-                throw new FraudResponseStatusException("Payment blocked due to fraud: " + fraudResponse.getReason());
+
+                TransactionStatusUpdate updateDto = TransactionStatusUpdate.builder()
+                        .merchantTransactionId(dto.getMerchantTransactionId())
+                        .transactionId(transactionId)
+                        .status("FRAUDULENT")
+                        .failureReason(fraudResponse.getReason())
+                        .build();
+
+                kafkaProducerService.sendTransactionStatus(KafkaTopicsConstants.TRANSACTION_STATUS, updateDto);
+
+                return; // Exit early if fraud detected
             }
         } catch (FeignException e) {
             log.error("Fraud service failed: {}", e.getMessage());
@@ -89,13 +98,7 @@ public class PaymentOrchestratorServiceImpl implements PaymentOrchestratorServic
             case "NETBANKING" -> netBankingClient.initiateNetBanking(transactionId, dto);
             default -> throw new IllegalArgumentException("Unsupported payment mode.");
         }
-
-        // Step 6: Respond
-        return PaymentResponse.builder()
-                .transactionId(transactionId)
-                .status("PENDING")
-                .message("Payment request initiated.")
-                .build();
+        log.info("Payment initiated for transaction ID: {}", transactionId);
     }
 
 
