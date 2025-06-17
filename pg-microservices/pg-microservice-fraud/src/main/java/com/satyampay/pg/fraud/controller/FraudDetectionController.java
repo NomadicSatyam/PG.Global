@@ -1,6 +1,8 @@
 package com.satyampay.pg.fraud.controller;
 
 import com.satyampay.pg.fraud.dto.FraudCheckResult;
+import com.satyampay.pg.fraud.dto.FraudDetectionRequest;
+import com.satyampay.pg.fraud.dto.FraudDetectionResponse;
 import com.satyampay.pg.fraud.dto.Transaction;
 import com.satyampay.pg.fraud.model.FraudRecord;
 import com.satyampay.pg.fraud.service.FraudDetectionService;
@@ -18,7 +20,7 @@ public class FraudDetectionController {
     private final FraudDetectionService fraudService;
 
     @PostMapping("/check")
-    public ResponseEntity<FraudCheckResult> check(@RequestBody Transaction dto) {
+    public ResponseEntity<FraudDetectionResponse> check(@RequestBody FraudDetectionRequest dto) {
         return ResponseEntity.ok(fraudService.check(dto));
     }
 

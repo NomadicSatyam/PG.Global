@@ -1,5 +1,6 @@
 package com.satyampay.pg.fraud.rules;
 
+import com.satyampay.pg.fraud.dto.FraudDetectionRequest;
 import com.satyampay.pg.fraud.dto.Transaction;
 import org.springframework.stereotype.Component;
 
@@ -15,7 +16,7 @@ public class VelocityRule implements FraudRule {
     private final Map<String, List<LocalDateTime>> merchantTxnLog = new ConcurrentHashMap<>();
 
     @Override
-    public Optional<String> evaluate(Transaction dto) {
+    public Optional<String> evaluate(FraudDetectionRequest dto) {
         merchantTxnLog.putIfAbsent(dto.getMerchantCode(), new ArrayList<>());
         List<LocalDateTime> timestamps = merchantTxnLog.get(dto.getMerchantCode());
 

@@ -1,7 +1,8 @@
 package com.satyampay.pg.fraud.service;
 
-import com.satyampay.pg.fraud.dto.FraudCheckResult;
-import com.satyampay.pg.fraud.dto.Transaction;
+
+import com.satyampay.pg.fraud.dto.FraudDetectionRequest;
+import com.satyampay.pg.fraud.dto.FraudDetectionResponse;
 import com.satyampay.pg.fraud.model.FraudRecord;
 import com.satyampay.pg.fraud.repository.FraudRecordRepository;
 import com.satyampay.pg.fraud.rules.RuleEngine;
@@ -20,10 +21,11 @@ public class FraudDetectionServiceImpl implements FraudDetectionService {
     private final RuleEngine ruleEngine;
 
     @Override
-    public FraudCheckResult check(Transaction dto) {
-        Optional<String> violation = ruleEngine.runAll(dto);
+    public FraudDetectionResponse check(FraudDetectionRequest dto) {
+        Optional<String> violation = ruleEngine.runAll(dto); // apply rules
 
         if (violation.isPresent()) {
+            // Save fraud record
             repository.save(FraudRecord.builder()
                     .transactionId(dto.getTransactionId())
                     .merchantCode(dto.getMerchantCode())
@@ -32,13 +34,16 @@ public class FraudDetectionServiceImpl implements FraudDetectionService {
                     .flaggedAt(LocalDateTime.now())
                     .build());
 
-            return FraudCheckResult.builder()
-                    .fraudDetected(true)
+            return FraudDetectionResponse.builder()
+                    .status("FRAUDULENT")
                     .reason(violation.get())
                     .build();
         }
 
-        return FraudCheckResult.builder().fraudDetected(false).build();
+        return FraudDetectionResponse.builder()
+                .status("CLEAR")
+                .reason("No violations detected")
+                .build();
     }
 
     @Override

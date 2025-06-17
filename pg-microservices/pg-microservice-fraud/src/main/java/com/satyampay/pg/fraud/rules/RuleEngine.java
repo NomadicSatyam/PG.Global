@@ -1,5 +1,6 @@
 package com.satyampay.pg.fraud.rules;
 
+import com.satyampay.pg.fraud.dto.FraudDetectionRequest;
 import com.satyampay.pg.fraud.dto.Transaction;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
@@ -12,7 +13,7 @@ import java.util.Optional;
 public class RuleEngine {
     private final List<FraudRule> rules;
 
-    public Optional<String> runAll(Transaction dto) {
+    public Optional<String> runAll(FraudDetectionRequest dto) {
         for (FraudRule rule : rules) {
             Optional<String> result = rule.evaluate(dto);
             if (result.isPresent()) return result;

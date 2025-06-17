@@ -2,6 +2,7 @@ package com.satyampay.pg.orchestrator.services;
 
 import com.satyampay.pg.orchestrator.clients.*;
 import com.satyampay.pg.orchestrator.dto.*;
+import com.satyampay.pg.orchestrator.exception.FraudResponseStatusException;
 import com.satyampay.pg.orchestrator.exception.MerchantAuthException;
 import com.satyampay.pg.orchestrator.exception.TransactionNotFoundException;
 import com.satyampay.pg.orchestrator.kafka.KafkaProducerService;
@@ -26,6 +27,7 @@ public class PaymentOrchestratorServiceImpl implements PaymentOrchestratorServic
     private final NetBankingServiceClient netBankingClient;
     private final TransactionServiceClient transactionClient;
     private final KafkaProducerService kafkaProducerService;
+    private final FraudDetectionServiceClient fraudClient;
 
 
     /**
@@ -39,16 +41,36 @@ public class PaymentOrchestratorServiceImpl implements PaymentOrchestratorServic
      */
     @Override
     public PaymentResponse initiatePayment(PaymentRequest dto) {
-        // 1. Validate merchant credentials and KYC
+        // Step 1: Validate merchant
         MerchantResponse merchant = merchantClient.getMerchantByCode(dto.getMerchantCode());
         if (!merchant.getApiKey().equals(dto.getApiKey()) || !merchant.isKycVerified()) {
             throw new MerchantAuthException("Invalid API key or unverified merchant.");
         }
 
-        // 2. Generate unique transaction ID and store initial transaction
+        // Step 2: Generate transaction ID
         String transactionId = UUID.randomUUID().toString();
 
-        // Create initial transaction record
+        // Step 3: Call Fraud Service
+        FraudDetectionRequest fraudRequest = FraudDetectionRequest.builder()
+                .transactionId(transactionId)
+                .merchantCode(dto.getMerchantCode())
+                .amount(dto.getAmount())
+                .currency(dto.getCurrency())
+                .paymentMode(dto.getPaymentMode())
+                .build();
+
+        try {
+            FraudDetectionResponse fraudResponse = fraudClient.checkTransaction(fraudRequest);
+            if ("FRAUDULENT".equalsIgnoreCase(fraudResponse.getStatus())) {
+                log.warn("Fraud detected for transaction {}: {}", transactionId, fraudResponse.getReason());
+                throw new FraudResponseStatusException("Payment blocked due to fraud: " + fraudResponse.getReason());
+            }
+        } catch (FeignException e) {
+            log.error("Fraud service failed: {}", e.getMessage());
+            throw new ResponseStatusException(HttpStatus.BAD_GATEWAY, "Fraud check failed");
+        }
+
+        // Step 4: Create transaction
         TransactionRequest transactionRequest = TransactionRequest.builder()
                 .merchantTransactionId(dto.getMerchantTransactionId())
                 .transactionId(transactionId)
@@ -58,15 +80,9 @@ public class PaymentOrchestratorServiceImpl implements PaymentOrchestratorServic
                 .paymentMode(dto.getPaymentMode())
                 .build();
 
-        try {
-            transactionClient.createTransaction(transactionRequest);
-            log.info("Transaction created with ID: {}", transactionId);
-        } catch (FeignException ex) {
-            log.error("Failed to create transaction: {}", ex.getMessage());
-            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Failed to create transaction");
-        }
+        transactionClient.createTransaction(transactionRequest);
 
-        // 3. Route payment request to respective payment mode microservice
+        // Step 5: Route payment
         switch (dto.getPaymentMode().toUpperCase()) {
             case "CARD" -> cardClient.initiateCardPayment(transactionId, dto);
             case "UPI" -> upiClient.initiateUpiPayment(transactionId, dto);
@@ -74,13 +90,14 @@ public class PaymentOrchestratorServiceImpl implements PaymentOrchestratorServic
             default -> throw new IllegalArgumentException("Unsupported payment mode.");
         }
 
-        // 4. Respond to merchant with PENDING status
+        // Step 6: Respond
         return PaymentResponse.builder()
                 .transactionId(transactionId)
                 .status("PENDING")
                 .message("Payment request initiated.")
                 .build();
     }
+
 
     /**
      * Handles callbacks from payment providers.

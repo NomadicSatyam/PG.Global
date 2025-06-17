@@ -22,4 +22,9 @@ public class ExceptionController {
     public ResponseEntity<String> handleTransactionNotFound(TransactionNotFoundException ex) {
        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ex.getMessage());
     }
+
+    @ExceptionHandler(FraudResponseStatusException.class)
+    public ResponseEntity<String> handleFraudResponseStatus(FraudResponseStatusException ex) {
+        return ResponseEntity.status(HttpStatus.FORBIDDEN).body(ex.getMessage());
+    }
 }
