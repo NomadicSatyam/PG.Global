@@ -18,7 +18,7 @@ import java.util.Map;
 public class TransactionConsumerService {
 
     private final ObjectMapper objectMapper;
-    public Map<String, String> statusMap = new HashMap<>();
+    public Map<String, TransactionStatusUpdate> statusMap = new HashMap<>();
 
     @KafkaListener(topics = AppConstants.TRANSACTION_STATUS, groupId = AppConstants.GROUP_ID)
     public void consume(ConsumerRecord<String, String> record) {
@@ -36,7 +36,7 @@ public class TransactionConsumerService {
             System.out.println("   Payment Reference: " + status.getPaymentReference());
 
             // Store the status in a map for quick access
-            statusMap.put(status.getMerchantTransactionId(), status.getStatus());
+            statusMap.put(status.getMerchantTransactionId(), status);
 
             sendNotifications(status);
 

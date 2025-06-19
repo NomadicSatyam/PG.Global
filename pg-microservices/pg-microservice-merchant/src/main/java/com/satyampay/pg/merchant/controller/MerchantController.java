@@ -2,10 +2,7 @@ package com.satyampay.pg.merchant.controller;
 
 import com.satyampay.pg.merchant.config.AppConstants;
 import com.satyampay.pg.merchant.consumer.TransactionConsumerService;
-import com.satyampay.pg.merchant.dto.MerchantRequest;
-import com.satyampay.pg.merchant.dto.MerchantResponse;
-import com.satyampay.pg.merchant.dto.PaymentRequest;
-import com.satyampay.pg.merchant.dto.PaymentResponse;
+import com.satyampay.pg.merchant.dto.*;
 import com.satyampay.pg.merchant.producer.MerchantProducerService;
 import com.satyampay.pg.merchant.services.MerchantService;
 import jakarta.validation.Valid;
@@ -67,14 +64,25 @@ public class MerchantController {
 
         // Exit loop after 2 minutes
         do {
-            Map<String, String> statusMap = transactionConsumerService.getStatusMap();
+            Map<String, TransactionStatusUpdate> statusMap = transactionConsumerService.getStatusMap();
             // Check if the payment is still processing
             if (statusMap.containsKey(dto.getMerchantTransactionId())) {
+
+                // If the payment is no longer processing, return the response
+                TransactionStatusUpdate statusUpdate = statusMap.get(dto.getMerchantTransactionId());
+
+                String message = "Payment Processed";
+                if ("FRAUDULENT".equalsIgnoreCase(statusUpdate.getStatus())) {
+                    message = "Payment marked as FRAUD";
+                }
+
                 PaymentResponse response = PaymentResponse.builder()
                         .merchantTransactionId(dto.getMerchantTransactionId())
-                        .message("Payment Processed")
-                        .status(statusMap.get(dto.getMerchantTransactionId()))
+                        .transactionId(statusUpdate.getTransactionId())
+                        .message(message)
+                        .status(statusUpdate.getStatus())
                         .build();
+
                 return ResponseEntity.ok(response); // Exit loop when payment is no longer processing
             }
             try {
