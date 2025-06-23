@@ -22,7 +22,7 @@ public class TransactionController {
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
-    @PutMapping("/status")
+    @PutMapping("/updateStatus")
     public ResponseEntity<Void> updateStatus(@RequestBody TransactionStatusUpdate dto) {
         transactionService.updateStatus(dto);
         return ResponseEntity.ok().build();

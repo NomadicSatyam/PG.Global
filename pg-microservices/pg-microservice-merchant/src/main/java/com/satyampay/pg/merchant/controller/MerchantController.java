@@ -1,5 +1,6 @@
 package com.satyampay.pg.merchant.controller;
 
+import com.satyampay.pg.merchant.client.TransactionServiceClient;
 import com.satyampay.pg.merchant.config.AppConstants;
 import com.satyampay.pg.merchant.consumer.TransactionConsumerService;
 import com.satyampay.pg.merchant.dto.*;
@@ -22,6 +23,8 @@ public class MerchantController {
     private final MerchantProducerService merchantProducerService;
 
     private final TransactionConsumerService transactionConsumerService;
+
+    private final TransactionServiceClient transactionClient;
 
     @PostMapping("/create")
     public ResponseEntity<MerchantResponse> create(@Valid @RequestBody MerchantRequest dto) {
@@ -70,6 +73,8 @@ public class MerchantController {
 
                 // If the payment is no longer processing, return the response
                 TransactionStatusUpdate statusUpdate = statusMap.get(dto.getMerchantTransactionId());
+
+                transactionClient.updateStatus(statusUpdate);
 
                 String message = "Payment Processed";
                 if ("FRAUDULENT".equalsIgnoreCase(statusUpdate.getStatus())) {

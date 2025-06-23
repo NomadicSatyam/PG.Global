@@ -22,10 +22,11 @@ public class Settlement {
     private String transactionId;
     private String merchantCode;
     private Double amount;
-
     private String status; // PENDING, SETTLED, FAILED
     private String bankReferenceId;
-
+    private String currency;
+    private String settlementReference;
+    private LocalDateTime settledAt;
     private LocalDateTime settlementDate;
     private LocalDateTime createdAt;
 }

@@ -3,8 +3,10 @@ package com.satyampay.pg.transaction.service;
 import com.satyampay.pg.transaction.dto.TransactionRequest;
 import com.satyampay.pg.transaction.dto.TransactionResponse;
 import com.satyampay.pg.transaction.dto.TransactionStatusUpdate;
+import com.satyampay.pg.transaction.dto.TransactionSuccessEvent;
 import com.satyampay.pg.transaction.exception.TransactionNotFoundException;
 import com.satyampay.pg.transaction.model.Transaction;
+import com.satyampay.pg.transaction.producer.TransactionStatusProducer;
 import com.satyampay.pg.transaction.repository.TransactionRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -16,6 +18,8 @@ import java.time.LocalDateTime;
 public class TransactionServiceImpl implements TransactionService {
 
     private final TransactionRepository repository;
+
+    private final TransactionStatusProducer eventProducer; // 👈 inject Kafka producer
 
     @Override
     public void createTransaction(TransactionRequest dto) {
@@ -42,6 +46,17 @@ public class TransactionServiceImpl implements TransactionService {
         transaction.setFailureReason(dto.getFailureReason());
         transaction.setUpdatedAt(LocalDateTime.now());
         repository.save(transaction);
+
+        // ✅ Trigger settlement if status is SUCCESS
+        if ("SUCCESS".equalsIgnoreCase(dto.getStatus())) {
+            TransactionSuccessEvent event = new TransactionSuccessEvent();
+            event.setTransactionId(transaction.getTransactionId());
+            event.setMerchantCode(transaction.getMerchantCode());
+            event.setAmount(transaction.getAmount());
+            event.setCurrency(transaction.getCurrency());
+
+            eventProducer.publishTransactionSuccess(event);
+        }
     }
 
     @Override

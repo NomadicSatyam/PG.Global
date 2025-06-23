@@ -23,4 +23,9 @@ public class SettlementController {
             @PathVariable String merchantCode) {
         return ResponseEntity.ok(settlementService.getSettlementsForMerchant(merchantCode));
     }
+
+    @GetMapping("/getAllSettlements")
+    public ResponseEntity<List<SettlementResponse>> getAllSettlements() {
+        return ResponseEntity.ok(settlementService.getAllSettlements());
+    }
 }
